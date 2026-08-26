@@ -1,0 +1,287 @@
+/* =========================================================
+   Atmosphere layer
+   ---------------------------------------------------------
+   Built from the visual grammar Ghibli films actually use:
+
+   · Ma (間) — the pause. Negative space as an active presence,
+     so sections breathe and reveals are unhurried.
+   · Wind as a character — long static shots where only the
+     grass and clouds move. A global gust drives everything.
+   · Layered atmospheric depth — drifting cloud bands and
+     light shafts sitting behind the content.
+   · Hand-painted softness — grain, haze, warm light, no
+     hard edges anywhere.
+
+   Every layer here is decorative: pointer-events:none, aria
+   hidden, and fully disabled under prefers-reduced-motion.
+   ========================================================= */
+
+/* --wind is a 0–1 gust strength driven by JS. Registering it lets it
+   interpolate smoothly instead of snapping between values. */
+@property --wind {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.08;
+}
+html {
+  --wind: 0.08;
+  transition: --wind 2.6s cubic-bezier(.33, .68, .36, 1);
+}
+
+/* ---------------- Sky: cloud bands + light shafts ---------------- */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cloud-band {
+  position: absolute;
+  left: -60%;
+  width: 220%;
+  height: 46vmin;
+  opacity: 0.5;
+  background-repeat: repeat-x;
+  background-size: 44vmin 100%;
+  will-change: transform;
+  /* soft painted cloud shapes, not hard circles */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='440' height='200'%3E%3Cg fill='%23ffffff'%3E%3Cellipse cx='120' cy='120' rx='110' ry='42'/%3E%3Cellipse cx='190' cy='96' rx='76' ry='40'/%3E%3Cellipse cx='262' cy='120' rx='96' ry='36'/%3E%3Cellipse cx='330' cy='108' rx='60' ry='30'/%3E%3C/g%3E%3C/svg%3E");
+  filter: blur(14px);
+}
+.cloud-band-1 { top: 4%;  opacity: 0.30; animation: cloud-drift 190s linear infinite; }
+.cloud-band-2 { top: 26%; opacity: 0.18; background-size: 62vmin 100%; filter: blur(22px); animation: cloud-drift 300s linear infinite reverse; }
+.cloud-band-3 { top: 58%; opacity: 0.12; background-size: 80vmin 100%; filter: blur(30px); animation: cloud-drift 420s linear infinite; }
+
+@keyframes cloud-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(44vmin, 0, 0); }
+}
+
+html[data-theme="dusk"] .cloud-band { opacity: 0.10; filter: blur(26px); }
+html[data-theme="dusk"] .cloud-band-1 { opacity: 0.14; }
+
+/* light shafts raking across the page — warm sun by day, cool moon by dusk */
+.sky-rays {
+  position: absolute;
+  inset: -30% -10%;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  transform: rotate(14deg);
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 5vmin,
+    rgba(255, 250, 214, 0.55) 5vmin 7vmin,
+    transparent 7vmin 13vmin,
+    rgba(255, 246, 205, 0.32) 13vmin 15vmin,
+    transparent 15vmin 26vmin
+  );
+  filter: blur(26px);
+  /* opacity only — moving a 26px-blurred full-screen layer would force a
+     re-rasterise every frame, where opacity stays on the compositor */
+  will-change: opacity;
+  animation: rays-breathe 17s ease-in-out infinite;
+}
+html[data-theme="dusk"] .sky-rays {
+  opacity: 0.34;
+  mix-blend-mode: screen;
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 6vmin,
+    rgba(178, 214, 255, 0.30) 6vmin 8vmin,
+    transparent 8vmin 16vmin,
+    rgba(150, 196, 245, 0.18) 16vmin 18vmin,
+    transparent 18vmin 30vmin
+  );
+}
+@keyframes rays-breathe {
+  0%, 100% { opacity: 0.30; }
+  50%      { opacity: 0.62; }
+}
+
+/* ---------------- Dust motes ---------------- */
+.dust-container {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  /* same trick as the grass: the gust pushes the whole mote field with one
+     transform rather than re-resolving a calc() inside 20 keyframes per frame */
+  transform: translate3d(calc(var(--wind) * 46px), 0, 0);
+  will-change: transform;
+}
+.mote {
+  position: absolute;
+  bottom: -6vh;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 248, 214, 0.95), rgba(233, 200, 120, 0.25) 60%, transparent 72%);
+  box-shadow: 0 0 8px rgba(255, 240, 190, 0.55);
+  animation-name: mote-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+html[data-theme="dusk"] .mote {
+  background: radial-gradient(circle at 35% 35%, rgba(220, 255, 226, 0.95), rgba(126, 214, 158, 0.3) 60%, transparent 72%);
+  box-shadow: 0 0 12px rgba(160, 240, 185, 0.6);
+}
+@keyframes mote-rise {
+  0%   { transform: translate3d(0, 0, 0) scale(0.7); opacity: 0; }
+  12%  { opacity: var(--peak, 0.75); }
+  50%  { transform: translate3d(18px, -55vh, 0) scale(1); }
+  88%  { opacity: var(--peak, 0.75); }
+  100% { transform: translate3d(-10px, -112vh, 0) scale(0.75); opacity: 0; }
+}
+
+/* ---------------- Grass at the foot of the hero ---------------- */
+.grass {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: clamp(90px, 15vh, 170px);
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  /* blades stroke with currentColor, so the whole field re-tints per theme */
+  color: #1f4a22;
+  /* soften only the very tips — a deeper fade would wash out the tall blades */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 13%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 13%);
+}
+/* moonlit grass reads pale against the dark ground, not near-black */
+html[data-theme="dusk"] .grass { color: #8dc79a; }
+/* The gust leans the whole field with ONE transform on the svg. Reading
+   var(--wind) inside each blade's keyframes meant all 46 blades restyled on
+   every frame of a gust; this is a single composited element instead, and a
+   field bending together is what wind actually looks like. */
+.grass svg {
+  width: 100%; height: 100%;
+  display: block;
+  transform-origin: bottom center;
+  transform: skewX(calc(var(--wind) * -7deg));
+  will-change: transform;
+}
+.blade {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: blade-sway var(--dur, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+/* fixed-amplitude idle sway — the gust rides on top via the parent skew */
+@keyframes blade-sway {
+  0%, 100% { transform: rotate(-2.2deg); }
+  50%      { transform: rotate(2.4deg); }
+}
+
+/* ---------------- Wind streaks ---------------- */
+.wind-streaks {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+.streak {
+  position: absolute;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 252, 226, 0.75), transparent);
+  opacity: 0;
+  animation: streak-sweep 1.5s cubic-bezier(.3, .7, .3, 1) forwards;
+}
+html[data-theme="dusk"] .streak {
+  background: linear-gradient(90deg, transparent, rgba(198, 236, 205, 0.6), transparent);
+}
+@keyframes streak-sweep {
+  0%   { transform: translate3d(-30vw, 0, 0) scaleX(0.35); opacity: 0; }
+  25%  { opacity: 0.85; }
+  100% { transform: translate3d(115vw, -3vh, 0) scaleX(1); opacity: 0; }
+}
+
+/* ---------------- Opening curtain ---------------- */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: var(--ground);
+  transition: opacity 1.05s var(--ease-soft), visibility 1.05s;
+}
+.curtain-leaf {
+  width: 46px; height: 46px;
+  fill: var(--ink-2);
+  opacity: 0;
+  animation: curtain-leaf 1.9s var(--ease-soft) infinite;
+}
+@keyframes curtain-leaf {
+  0%   { opacity: 0; transform: translateY(10px) rotate(-16deg) scale(0.85); }
+  45%  { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) rotate(16deg) scale(0.85); }
+}
+.curtain.lifted { opacity: 0; visibility: hidden; }
+
+/* ---------------- Ma: give the page more room to breathe ---------------- */
+.panel { margin-block: clamp(3rem, 8vw, 7rem); }
+.panel-inner { padding-block: clamp(4rem, 9vw, 7.5rem); }
+.interlude { margin-block: clamp(4rem, 11vw, 10rem); }
+.section-title { margin-bottom: clamp(2.4rem, 5vw, 3.6rem); }
+
+/* …but not straight after the hero: the full margin left the grass stranded
+   with a band of empty page under it. Enough room to breathe, not a void. */
+main > :first-child { margin-top: clamp(1.5rem, 3vw, 3rem); }
+
+/* ---------------- Micro-interactions ---------------- */
+/* pills lean like grass when you brush past them */
+.pill {
+  transition:
+    transform 0.55s cubic-bezier(.34, 1.56, .48, 1),
+    background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
+.pill:hover { transform: translateY(-4px) rotate(-1.5deg); }
+
+/* buttons settle with a little spring rather than a linear slide */
+.btn-pill, .btn-ghost, .contact-links a, .hero-contact a {
+  transition:
+    transform 0.5s cubic-bezier(.34, 1.5, .5, 1),
+    background 0.35s ease, color 0.35s ease,
+    border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* the leaf mark in the nav turns gently in the wind */
+.nav-mark svg {
+  transform-origin: 60% 70%;
+  animation: mark-turn 9s ease-in-out infinite;
+}
+@keyframes mark-turn {
+  0%, 100% { transform: rotate(calc(-4deg - var(--wind) * 10deg)); }
+  50%      { transform: rotate(calc(4deg + var(--wind) * 12deg)); }
+}
+
+/* a soft vignette so the page reads like a painted frame */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 997;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(46, 62, 34, 0.14) 100%);
+}
+html[data-theme="dusk"] .vignette {
+  background: radial-gradient(ellipse at 50% 45%, transparent 46%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .sky, .dust-container, .wind-streaks, .firefly, .grass { display: none; }
+  .curtain { display: none; }
+  .nav-mark svg { animation: none; }
+  .cloud-band, .sky-rays, .mote, .blade { animation: none !important; }
+}
+
+/* the atmosphere is decoration — never let it cost a scroll */
+@media (max-width: 720px) {
+  .cloud-band-3 { display: none; }
+  .sky-rays { opacity: 0.28; }
+  .firefly { display: none; }
+}

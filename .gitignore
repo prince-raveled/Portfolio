@@ -1,0 +1,21 @@
+# --- raw camera originals -------------------------------------------------
+# The site loads the optimised copies in assets/photos/ and assets/web/.
+# These are the untouched 4–8 MB source files (~28 MB total); they stay on
+# your machine but are kept out of git history, which never forgets a blob.
+# Delete these lines if you want them versioned.
+assets/portfolio-images/Photography (*).jpeg
+assets/portfolio-images/Me.jpeg
+assets/portfolio-images/Conference.jpeg
+
+# --- scratch --------------------------------------------------------------
+tmp/
+
+# --- tooling / OS ---------------------------------------------------------
+node_modules/
+.vercel
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+__pycache__/
+*.pyc

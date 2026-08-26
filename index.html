@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prince Kumar — Bioinformatics &amp; Visual Craft</title>
+<meta name="description" content="Prince Kumar — Bioinformatics student, photographer, 3D artist, and data-curious builder. Resume &amp; portfolio.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%83%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Caveat:wght@600&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/atmosphere.css">
+</head>
+<body>
+
+<!-- opening curtain -->
+<div class="curtain" id="curtain" aria-hidden="true">
+  <svg class="curtain-leaf" viewBox="0 0 24 24"><path d="M12 2C6 2 2 8 2 14c4 0 8-2 10-6 0 5-3 9-8 10 2 1 4 1 6 1 6 0 10-6 10-13 0-1.5-.3-3-1-4-1.8 1.2-3.9 2-6 2z"/></svg>
+</div>
+
+<!-- atmosphere: sky, weather, light -->
+<div class="sky" aria-hidden="true">
+  <div class="cloud-band cloud-band-3"></div>
+  <div class="cloud-band cloud-band-2"></div>
+  <div class="cloud-band cloud-band-1"></div>
+  <div class="sky-rays"></div>
+</div>
+<div class="ground-glow"></div>
+<div class="dust-container" id="dust" aria-hidden="true"></div>
+<div class="wind-streaks" id="windStreaks" aria-hidden="true"></div>
+<div class="leaves-container" id="leaves"></div>
+<div class="soot-container" id="soots"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain-overlay"></div>
+<div class="scroll-rail"><div class="scroll-rail-fill" id="scrollRail"></div></div>
+
+<!-- ======================= NAV ======================= -->
+<nav class="nav" id="nav">
+  <div class="nav-mark" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6 2 2 8 2 14c4 0 8-2 10-6 0 5-3 9-8 10 2 1 4 1 6 1 6 0 10-6 10-13 0-1.5-.3-3-1-4-1.8 1.2-3.9 2-6 2z"/></svg>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Journey</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#awards">Awards</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch to dusk theme" aria-pressed="false">
+      <img class="tt-day" src="assets/photos/toggle-day.jpg?v=de4c86c1" alt="" aria-hidden="true">
+      <img class="tt-night" src="assets/photos/toggle-night.jpg?v=37db06b2" alt="" aria-hidden="true">
+    </button>
+    <button class="nav-burger" id="navBurger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ======================= HERO ======================= -->
+<header class="hero" id="hero">
+  <div class="hero-inner">
+
+    <div class="hero-copy">
+      <p class="hero-kicker anim-in" style="--d:.15s">Bioinformatics · Data · Visual Craft</p>
+      <h1 class="hero-title" data-split>Prince Kumar</h1>
+      <p class="hero-tagline anim-in" style="--d:.5s">
+        A bioinformatics student who paints in code, cameras, and 3D — building quietly
+        at the crossroads of biology, data, and imagination.
+      </p>
+      <div class="hero-actions anim-in" style="--d:.65s">
+        <a class="btn-pill" href="#projects">See my work</a>
+        <a class="btn-ghost" href="#contact">Say hello</a>
+      </div>
+
+      <div class="hero-contact anim-in" style="--d:.8s">
+        <a href="mailto:princeatspace@gmail.com">
+          <svg viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v.01L12 13l8-6.99V6H4zm16 12V8.24l-8 6.99-8-6.99V18h16z"/></svg>
+          princeatspace@gmail.com
+        </a>
+        <a href="tel:8521032704">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+          852-103-2704
+        </a>
+        <a href="https://github.com/prince-raveled" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6.2 0c2.3-1.6 3.3-1.2 3.3-1.2.7 1.6.3 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+          GitHub
+        </a>
+        <a href="https://linkedin.com/in/prince-kumar-392b28353/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.4 20.4h-3.6v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.2V9h3.5v1.6h.1c.5-.9 1.7-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.4H3.6V9h3.5v11.4z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <!-- circular portrait, held by a soft halo and two slow rings -->
+    <div class="collage" id="collage">
+      <div class="portrait-orb" id="portraitOrb">
+        <span class="orb-glow" aria-hidden="true"></span>
+        <span class="orb-ring" aria-hidden="true"></span>
+        <span class="orb-ring orb-ring-2" aria-hidden="true"><i></i><i></i><i></i></span>
+        <img src="assets/photos/prince-portrait.jpg?v=41431a92" alt="Portrait of Prince Kumar" loading="eager">
+      </div>
+    </div>
+  </div>
+
+  <div class="grass" id="grass" aria-hidden="true"></div>
+  <a href="#skills" class="scroll-cue"><span></span>Scroll</a>
+</header>
+
+<main>
+
+  <!-- ============ INTERLUDE 1 ============ -->
+  <section class="interlude" aria-hidden="true">
+    <div class="interlude-frame">
+      <div class="interlude-img" style="background-image:url('assets/web/interlude-1.jpg');"></div>
+    </div>
+    <p class="interlude-quote" data-fade>“Always believe in yourself. Do this and no matter where you are, you will have nothing to fear.”</p>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section id="skills" class="panel">
+    <div class="panel-inner">
+      <p class="eyebrow" data-fade>Toolkit</p>
+      <h2 class="section-title" data-split>Skills &amp; Craft</h2>
+
+      <div class="skills-grid">
+        <div class="card" data-rise>
+          <h3>Languages</h3>
+          <div class="pill-group">
+            <span class="pill">C / C++</span>
+            <span class="pill">Python</span>
+            <span class="pill">Bash</span>
+            <span class="pill">Perl</span>
+            <span class="pill">MySQL</span>
+            <span class="pill">Linux Command-Line</span>
+          </div>
+        </div>
+        <div class="card" data-rise>
+          <h3>Technologies &amp; Tools</h3>
+          <div class="pill-group">
+            <span class="pill">Linux</span>
+            <span class="pill">Bioinformatics Pipelines</span>
+            <span class="pill">Metagenomics</span>
+            <span class="pill">MetaPhlAn</span>
+            <span class="pill">Bowtie2</span>
+            <span class="pill">FASTQ Handling</span>
+            <span class="pill">Sequence Alignment</span>
+            <span class="pill">Taxonomic Profiling</span>
+            <span class="pill">PyMOL</span>
+            <span class="pill">Blender</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERIENCE ============ -->
+  <section id="experience" class="panel">
+    <div class="panel-inner">
+      <p class="eyebrow" data-fade>Experience</p>
+      <h2 class="section-title" data-split>Work Journey</h2>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-track"><div class="timeline-track-fill" id="timelineFill"></div></div>
+
+        <div class="timeline-item" data-rise>
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="tag">Sept 2025 — Present</span>
+            <h3>3D Artist <small>300dpi (College Club), SASTRA Deemed University</small></h3>
+            <ul>
+              <li>Designed and rendered 3D visual assets for college events, posters, and digital media.</li>
+              <li>Performed 3D modeling, lighting, texturing, and rendering using Blender.</li>
+              <li>Collaborated with the club design team to translate creative concepts into high-quality visual outputs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item" data-rise>
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="tag">Jan 2026 — Present</span>
+            <h3>Photography &amp; Media Team Member <small>DeNovo – SCBT (College Club), SASTRA Deemed University</small></h3>
+            <ul>
+              <li>Selected as a member of DeNovo, the departmental student club of the School of Chemical and Biotechnology (SCBT).</li>
+              <li>Documented technical workshops, seminars, and webinars through event photography and visual coverage.</li>
+              <li>Developed visual content to support academic outreach and technical event engagement.</li>
+              <li>Coordinated with organizing teams for smooth documentation and media delivery.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAMERA ROLL ============
+       Not a section of its own — just a strip of my own frames
+       running past, the way a contact sheet would.               -->
+  <div class="camera-roll" id="lens">
+    <p class="roll-label"><span>Camera roll</span> · my own frames</p>
+
+    <div class="filmstrip" id="filmstrip">
+      <div class="filmstrip-track" id="filmTrack">
+
+        <figure class="film-frame" data-src="assets/photos/lens-bridge.jpg?v=7e06dff9">
+          <div class="film-img"><img src="assets/photos/lens-bridge.jpg?v=7e06dff9" alt="A sea bridge and rail line curving out over turquoise water, boats on the shore" loading="lazy"></div>
+          <figcaption><span class="film-no">01</span> Where the rail meets the sea</figcaption>
+        </figure>
+
+        <figure class="film-frame" data-src="assets/photos/lens-nightfield.jpg?v=bd765942">
+          <div class="film-img"><img src="assets/photos/lens-nightfield.jpg?v=bd765942" alt="Orion over a dark treeline and a rooftop water tank" loading="lazy"></div>
+          <figcaption><span class="film-no">02</span> Orion over the treeline</figcaption>
+        </figure>
+
+        <figure class="film-frame" data-src="assets/photos/lens-orion.jpg?v=e7ca31db">
+          <div class="film-img"><img src="assets/photos/lens-orion.jpg?v=e7ca31db" alt="A field of stars in a deep night sky" loading="lazy"></div>
+          <figcaption><span class="film-no">03</span> The quiet hours</figcaption>
+        </figure>
+
+        <figure class="film-frame" data-src="assets/photos/lens-stars.jpg?v=293141cd">
+          <div class="film-img"><img src="assets/photos/lens-stars.jpg?v=293141cd" alt="Scattered stars against a blue-black sky" loading="lazy"></div>
+          <figcaption><span class="film-no">04</span> Long exposure, no hurry</figcaption>
+        </figure>
+
+        <figure class="film-frame" data-src="assets/photos/lens-treeline.jpg?v=90c5e32f">
+          <div class="film-img"><img src="assets/photos/lens-treeline.jpg?v=90c5e32f" alt="Night sky above a silhouetted line of trees" loading="lazy"></div>
+          <figcaption><span class="film-no">05</span> Above the canopy</figcaption>
+        </figure>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INTERLUDE 2 ============ -->
+  <section class="interlude" aria-hidden="true">
+    <div class="interlude-frame">
+      <div class="interlude-img" style="background-image:url('assets/web/interlude-2.jpg');"></div>
+    </div>
+    <p class="interlude-quote" data-fade>“Nothing that happens is ever forgotten, even if you can’t remember it.”</p>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section id="projects" class="panel">
+    <div class="panel-inner">
+      <p class="eyebrow" data-fade>Research &amp; Builds</p>
+      <h2 class="section-title" data-split>Project Work</h2>
+
+      <!-- lead project: the conference poster -->
+      <article class="card feature-card" data-rise>
+        <figure class="feature-shot">
+          <img src="assets/photos/conference.jpg?v=d0122bd4" alt="Prince presenting at the bioinformatics poster session, SASTRA" loading="lazy">
+          <figcaption>Poster Session — AIxLife 2026</figcaption>
+        </figure>
+        <div class="feature-body">
+          <span class="tag alt">2026 · Conference Poster</span>
+          <h3>Impact of Reference Database Selection on Species-Level Microbiome Profiling</h3>
+          <p class="role">First Author · with N.T. Devika · Dept. of Bioinformatics, SASTRA</p>
+          <ul>
+            <li>Evaluated how reference database choice (SILVA vs. Greengenes) changes species-level taxonomic assignment, using a host–pathogen infection model.</li>
+            <li>Built <strong>SG_consensus</strong>, an integrated database merging SILVA and Greengenes to improve taxonomic consistency and reduce database-dependent variability.</li>
+            <li>Constructed microbial co-occurrence networks with SparCC (|r| ≥ 0.5, p &lt; 0.01), comparing interaction patterns across all three databases.</li>
+            <li>Showed that database selection significantly shifts downstream ecological interpretation; partial conflict resolution achieved, with refinement ongoing.</li>
+          </ul>
+          <p class="tools">QIIME 2 · SparCC · SILVA · Greengenes · 16S rRNA</p>
+        </div>
+      </article>
+
+      <div class="projects-grid">
+
+        <article class="card project-card" data-rise>
+          <figure class="card-shot">
+            <img src="assets/web/proj-pokemon.jpg?v=04edc4ad" alt="" loading="lazy">
+          </figure>
+          <span class="tag alt">2025</span>
+          <h3>Pokémon Dataset Analysis</h3>
+          <p class="role">Data Science Project</p>
+          <ul>
+            <li>Performed data preprocessing and feature engineering on a Pokémon dataset to analyze and predict battle-related attributes.</li>
+            <li>Applied encoding techniques and statistical analysis to transform raw data into meaningful features.</li>
+            <li>Gained hands-on experience in understanding how raw datasets evolve into structured inputs for machine learning models.</li>
+          </ul>
+          <p class="tools">Python · Pandas · NumPy</p>
+        </article>
+
+        <article class="card project-card" data-rise>
+          <figure class="card-shot">
+            <img src="assets/web/proj-levelup.jpg?v=5eb01157" alt="" loading="lazy">
+          </figure>
+          <span class="tag alt">2025</span>
+          <h3>LEVEL UP</h3>
+          <p class="role">Backend &amp; Database Developer · Collaborative Project</p>
+          <ul>
+            <li>Co-developed a platform to help students form effective teams for research, projects, hackathons, and research-oriented collaborations based on complementary skills.</li>
+            <li>Designed and implemented backend workflows with a focus on database schema design and core application logic.</li>
+            <li>Assisted in integrating real-time collaboration features using socket-based communication.</li>
+          </ul>
+          <p class="tools">Node.js · Express · MongoDB (Mongoose) · Socket.IO</p>
+        </article>
+
+        <article class="card project-card" data-rise>
+          <figure class="card-shot">
+            <img src="assets/web/hero-illustration.jpg?v=495651f1" alt="" loading="lazy">
+          </figure>
+          <span class="tag alt">2025 — Present</span>
+          <h3>Gut Metagenome Analysis</h3>
+          <p class="role">Bioinformatics Project · Ongoing</p>
+          <ul>
+            <li>Performing gut metagenomic data analysis in a Linux-based bioinformatics workspace.</li>
+            <li>Working with FASTQ files for quality control, preprocessing, and downstream analysis.</li>
+            <li>Using MetaPhlAn and alignment-based tools for taxonomic profiling of gut microbiome samples.</li>
+            <li>Executing analysis pipelines in Linux/HPC environments and developing reproducible workflows.</li>
+          </ul>
+          <p class="tools">Linux · MetaPhlAn · Bowtie2 · FASTQ</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section id="education" class="panel">
+    <div class="panel-inner">
+      <p class="eyebrow" data-fade>Study</p>
+      <h2 class="section-title" data-split>Education</h2>
+
+      <div class="card education-card" data-rise>
+        <span class="tag">Aug 2024 — Present · Expected 2028</span>
+        <h3>B.Tech in Bioinformatics <small>SASTRA Deemed University</small></h3>
+
+        <div class="cgpa-row">
+          <div class="cgpa-dial" id="cgpaDial">
+            <svg viewBox="0 0 120 120">
+              <circle class="dial-bg" cx="60" cy="60" r="52"></circle>
+              <circle class="dial-fg" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <span class="dial-num" id="cgpaNum">0.00</span>
+          </div>
+          <div>
+            <p class="cgpa"><span class="cgpa-label">CGPA</span><span class="cgpa-num">8.49</span><span class="cgpa-den">/ 10</span></p>
+            <p class="cgpa-sub">3rd Year · B.Tech Bioinformatics</p>
+          </div>
+        </div>
+
+        <p class="coursework-label">Relevant Coursework</p>
+        <div class="pill-group">
+          <span class="pill">Molecular Biology</span>
+          <span class="pill">Genetics</span>
+          <span class="pill">Biochemistry</span>
+          <span class="pill">Fundamentals of Database Management</span>
+          <span class="pill">C / C++</span>
+          <span class="pill">Programming for Bioinformatics</span>
+          <span class="pill">Data Structures</span>
+          <span class="pill">Linux for Bioinformatics</span>
+          <span class="pill">Genomics</span>
+          <span class="pill">Proteomics</span>
+          <span class="pill">Introduction to Machine Learning</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERLUDE 3 ============ -->
+  <section class="interlude" aria-hidden="true">
+    <div class="interlude-frame">
+      <div class="interlude-img" style="background-image:url('assets/web/interlude-3.jpg');"></div>
+    </div>
+    <p class="interlude-quote" data-fade>“The wind is rising — we must try to live.”</p>
+  </section>
+
+  <!-- ============ AWARDS ============ -->
+  <section id="awards" class="panel">
+    <div class="panel-inner">
+      <p class="eyebrow" data-fade>Recognition</p>
+      <h2 class="section-title" data-split>Awards</h2>
+
+      <ul class="awards-list">
+        <li data-rise><strong>Genetic Ideathon 2025</strong> — Participant, organized by Byte Club, SASTRA Deemed University.</li>
+        <li data-rise><strong>National Webinar Series in Bioinformatics &amp; Computational Biology</strong> — Attended DBT-sponsored series organized by the Bioinformatics Center (BIC), SASTRA.</li>
+        <li data-rise><strong>Bioinformatics Workshop</strong> — Participated in hands-on workshop organized by DAKSH at SASTRA University.</li>
+        <li data-rise><strong>CoppeliaSim Robotics Workshop</strong> — Participant, Robotics Club @ SASTRA.</li>
+        <li data-rise><strong>IoT Workshop</strong> — Participated in IoT workshop conducted at SASTRA Deemed University.</li>
+        <li data-rise><strong>Innovatia'24</strong> — Participant, Entrepreneurship Cell, SASTRA Deemed University.</li>
+      </ul>
+
+      <p class="cert-label" data-fade>Certificates</p>
+    </div>
+
+    <!-- horizontal, scroll-driven certificate reel -->
+    <div class="reel" id="reel">
+      <div class="reel-track" id="reelTrack">
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(1).png?v=b005d52d"><img src="assets/portfolio-images/Certificate%20(1).png?v=b005d52d" alt="Certificate 1" loading="lazy"></button>
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(2).png?v=9adbdb66"><img src="assets/portfolio-images/Certificate%20(2).png?v=9adbdb66" alt="Certificate 2" loading="lazy"></button>
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(3).png?v=0f31d475"><img src="assets/portfolio-images/Certificate%20(3).png?v=0f31d475" alt="Certificate 3" loading="lazy"></button>
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(4).png?v=ec3c8df4"><img src="assets/portfolio-images/Certificate%20(4).png?v=ec3c8df4" alt="Certificate 4" loading="lazy"></button>
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(5).png?v=071b3ab4"><img src="assets/portfolio-images/Certificate%20(5).png?v=071b3ab4" alt="Certificate 5" loading="lazy"></button>
+        <button class="cert-thumb" data-src="assets/portfolio-images/Certificate%20(6).png?v=35c0bc2d"><img src="assets/portfolio-images/Certificate%20(6).png?v=35c0bc2d" alt="Certificate 6" loading="lazy"></button>
+      </div>
+      <p class="reel-hint">drag · scroll · click to enlarge</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================= CONTACT ======================= -->
+<footer id="contact" class="panel contact-panel">
+  <div class="panel-inner">
+    <p class="eyebrow" data-fade>Say hello</p>
+    <h2 class="section-title" data-split>Let’s build something</h2>
+    <p class="contact-lede" data-fade>Always up for a conversation about bioinformatics, data pipelines, 3D art, or a good Ghibli film.</p>
+
+    <div class="contact-links" data-fade>
+      <a href="mailto:princeatspace@gmail.com">
+        <svg viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v.01L12 13l8-6.99V6H4zm16 12V8.24l-8 6.99-8-6.99V18h16z"/></svg>
+        Email
+      </a>
+      <a href="tel:8521032704">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+        Call
+      </a>
+      <a href="https://github.com/prince-raveled" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.6.1-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6.2 0c2.3-1.6 3.3-1.2 3.3-1.2.7 1.6.3 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+        GitHub
+      </a>
+      <a href="https://linkedin.com/in/prince-kumar-392b28353/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M20.4 20.4h-3.6v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.2V9h3.5v1.6h.1c.5-.9 1.7-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.4H3.6V9h3.5v11.4z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+
+    <p class="footer-note" data-fade>Made with ☕ and a little Ghibli magic.</p>
+  </div>
+</footer>
+
+<button class="totoro-top" id="totoroTop" aria-label="Back to top">
+  <svg viewBox="0 0 64 64">
+    <ellipse cx="32" cy="38" rx="22" ry="20" fill="#5b5751"/>
+    <path d="M18 20 L22 6 L28 22 Z" fill="#5b5751"/>
+    <path d="M46 20 L42 6 L36 22 Z" fill="#5b5751"/>
+    <ellipse cx="32" cy="42" rx="13" ry="15" fill="#e8dcc0"/>
+    <circle cx="24" cy="32" r="4.2" fill="#f4efe2"/>
+    <circle cx="40" cy="32" r="4.2" fill="#f4efe2"/>
+    <circle cx="24" cy="33" r="2" fill="#221f1c"/>
+    <circle cx="40" cy="33" r="2" fill="#221f1c"/>
+    <ellipse cx="32" cy="38" rx="4" ry="3" fill="#7a716a"/>
+  </svg>
+</button>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <img src="" alt="Preview" class="lightbox-img" id="lightboxImg">
+  <p class="lightbox-caption" id="lightboxCaption"></p>
+</div>
+
+<!-- motion libraries: smooth inertia scroll + scroll-linked animation -->
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script defer src="js/atmosphere.js"></script>
+<script defer src="js/script.js"></script>
+</body>
+</html>
