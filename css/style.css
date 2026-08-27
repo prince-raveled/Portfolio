@@ -835,6 +835,10 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   cursor: grab;
   will-change: transform;
   touch-action: pan-y;
+  /* Dragging the strip must not start a text selection or the browser's own
+     image drag — that is what put the blue highlight over a frame mid-drag. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .filmstrip-track.dragging { cursor: grabbing; }
 
@@ -854,6 +858,10 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   aspect-ratio: 3 / 2;
   object-fit: cover;
   object-position: center;
+  /* stops the browser picking the photo up as a draggable object */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
   filter: saturate(0.85) contrast(1.05);
   transform: scale(1.02);
   transition: transform 0.9s var(--ease-soft), filter 0.6s var(--ease-soft);
@@ -1053,6 +1061,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   aspect-ratio: 4 / 3;
   object-fit: cover;
   object-position: center top;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
   filter: grayscale(1) contrast(1.04);
   transition: filter 0.55s var(--ease-soft);
   pointer-events: none;

@@ -510,6 +510,8 @@
   // GSAP scroll tween AND this drag handler both writing transform, which
   // meant a drag was wiped out by the next scroll. Native scrolling also gets
   // touch momentum, trackpad gestures and keyboard for free.
+  document.getElementById("reelTrack")
+    ?.addEventListener("dragstart", (e) => e.preventDefault());
 
   /* ------------------------------------------------------------------
      10b. Camera roll — a genuinely endless carousel
@@ -523,7 +525,7 @@
   const filmStrip = document.getElementById("filmstrip");
 
   if (filmTrack && filmStrip && filmTrack.children.length) {
-    const DRIFT = 26;                                  // px per second
+    const DRIFT = 42;                                  // px per second
     const originals = Array.from(filmTrack.children);
     let setWidth = 0;
     let offset = 0;
@@ -607,6 +609,10 @@
     };
 
     /* --- drag --- */
+    // -webkit-user-drag is not honoured everywhere (Firefox), so refuse the
+    // native drag outright as well
+    filmTrack.addEventListener("dragstart", (e) => e.preventDefault());
+
     filmTrack.addEventListener("pointerdown", (e) => {
       dragging = true;
       moved = 0;
