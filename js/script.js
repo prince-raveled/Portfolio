@@ -677,12 +677,23 @@
   const lightboxCaption = document.getElementById("lightboxCaption");
 
   const openLightbox = (src, alt, caption) => {
+    lightboxImg.removeAttribute("style");
     lightboxImg.src = src;
     lightboxImg.alt = alt || "Preview";
     lightboxCaption.textContent = caption || "";
     lightbox.classList.add("open");
     document.body.classList.add("no-scroll");
     lenis?.stop();
+
+    // Never blow an image up more than 2x its own pixels. The certificate
+    // scans are only ~470px wide, and stretching them to the full 1100px
+    // panel turned "view" into an unreadable blur.
+    const capUpscale = () => {
+      if (!lightboxImg.naturalWidth) return;
+      lightboxImg.style.maxWidth = `min(92vw, 1100px, ${lightboxImg.naturalWidth * 2}px)`;
+    };
+    if (lightboxImg.complete) capUpscale();
+    else lightboxImg.addEventListener("load", capUpscale, { once: true });
   };
   const closeLightbox = () => {
     lightbox.classList.remove("open");
@@ -694,6 +705,14 @@
     btn.addEventListener("click", () => {
       openLightbox(btn.getAttribute("data-src"), btn.querySelector("img")?.alt);
     });
+
+    // A certificate slot whose file isn't on disk yet removes itself, so the
+    // reel never shows a broken frame and a newly dropped-in file just appears.
+    const img = btn.querySelector("img");
+    if (!img) return;
+    const drop = () => btn.remove();
+    if (img.complete && img.naturalWidth === 0) drop();
+    else img.addEventListener("error", drop, { once: true });
   });
 
   // delegated, because the carousel clones its frames to loop endlessly and

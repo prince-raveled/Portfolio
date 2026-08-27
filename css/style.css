@@ -840,6 +840,7 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   padding: 1.6rem clamp(1.4rem, 5vw, 4rem);
   cursor: grab;
   will-change: transform;
+  touch-action: pan-y;
 }
 .filmstrip-track.dragging { cursor: grabbing; }
 
@@ -1025,6 +1026,10 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   padding: 0 clamp(1.4rem, 5vw, 4rem);
   cursor: grab;
   will-change: transform;
+  /* the browser keeps vertical scrolling, JS owns horizontal drag. Without
+     this a tap on a certificate was being treated as the start of a pan and
+     the click never arrived. */
+  touch-action: pan-y;
 }
 .reel-track.dragging { cursor: grabbing; }
 .cert-thumb {
