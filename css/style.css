@@ -289,19 +289,21 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 .theme-toggle:hover img { transform: scale(1.14); }
 .theme-toggle:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 3px; }
 
-.nav-burger { display: none; width: 32px; height: 24px; position: relative; }
+/* 44x44 hit area — it was 32x24, under the touch minimum, and this is the
+   only way to reach the menu on a phone. The bars stay visually the same. */
+.nav-burger { display: none; width: 44px; height: 44px; position: relative; flex: none; }
 .nav-burger span {
-  position: absolute; left: 0; right: 0; height: 1.8px;
+  position: absolute; left: 6px; right: 6px; height: 1.8px;
   background: var(--ink);
   border-radius: 2px;
   transition: all 0.4s var(--ease-soft);
 }
-.nav-burger span:nth-child(1) { top: 0; }
-.nav-burger span:nth-child(2) { top: 11px; }
-.nav-burger span:nth-child(3) { top: 22px; }
-.nav-burger.open span:nth-child(1) { transform: translateY(11px) rotate(45deg); }
+.nav-burger span:nth-child(1) { top: 12px; }
+.nav-burger span:nth-child(2) { top: 21px; }
+.nav-burger span:nth-child(3) { top: 30px; }
+.nav-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
 .nav-burger.open span:nth-child(2) { opacity: 0; }
-.nav-burger.open span:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
+.nav-burger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
 /* ---------- Hero ---------- */
 .hero {
@@ -399,22 +401,6 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   place-items: center;
 }
 
-.polaroid {
-  padding: 10px 10px 12px;
-  background: var(--paper);
-  border-radius: 4px;
-  box-shadow: var(--shadow-m);
-}
-.polaroid::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  pointer-events: none;
-  opacity: 0.42;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.72 0 0 0 0 0.78 0 0 0 0 0.6 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
-}
 
 /* circular portrait — the resume photo, front and centre */
 /* ScrollTrigger owns .portrait-orb's transform, so the idle float lives on the
@@ -494,28 +480,6 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   to   { transform: rotate(360deg); }
 }
 
-/* the drifting frames sit behind, desaturated */
-.polaroid.drift {
-  --x: 0%; --y: 0%; --rot: 0deg;
-  /* --drift-y is animated by ScrollTrigger; keeping it inside the transform
-     means GSAP never has to overwrite the layout offsets above */
-  --drift-y: 0px;
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 40%;
-  translate: -50% -50%;
-  transform: translate(var(--x), calc(var(--y) + var(--drift-y))) rotate(var(--rot));
-  z-index: 1;
-}
-.polaroid.drift.small { width: 31%; }
-.polaroid.drift img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  object-position: center;
-  filter: grayscale(1) contrast(1.05) brightness(1.02);
-  border-radius: 2px;
-}
 
 /* --- scroll cue --- */
 .scroll-cue {
@@ -1029,19 +993,28 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 .awards-list strong { color: var(--ink); font-weight: 800; }
 
 /* ---------- Certificate reel ---------- */
-.reel { padding: 0 0 clamp(3rem, 7vw, 5rem); overflow: hidden; }
+/* Native horizontal scrolling: touch momentum, trackpad gestures, shift-wheel
+   and keyboard all come free, and there is no transform for anything else to
+   fight over. */
+.reel {
+  padding: 0 0 clamp(3rem, 7vw, 5rem);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.reel::-webkit-scrollbar { height: 6px; }
+.reel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.reel::-webkit-scrollbar-track { background: transparent; }
 .reel-track {
   display: flex;
   gap: 1.4rem;
   padding: 0 clamp(1.4rem, 5vw, 4rem);
-  cursor: grab;
-  will-change: transform;
-  /* the browser keeps vertical scrolling, JS owns horizontal drag. Without
-     this a tap on a certificate was being treated as the start of a pan and
-     the click never arrived. */
-  touch-action: pan-y;
+  width: max-content;
 }
-.reel-track.dragging { cursor: grabbing; }
+.cert-thumb { scroll-snap-align: center; }
 .cert-thumb {
   position: relative;
   flex: 0 0 clamp(200px, 26vw, 300px);
@@ -1238,14 +1211,28 @@ body.no-scroll { overflow: hidden; }
   .nav-burger { display: block; }
   .collage { min-height: 300px; }
   .portrait-orb { width: min(210px, 56%); }
-  .polaroid.drift { width: 44%; }
-  .polaroid.drift.small { width: 30%; }
 }
 
 @media (max-width: 480px) {
   .contact-links a { padding: 0.7rem 1.2rem; font-size: 0.66rem; }
   .section-title { margin-bottom: 2rem; }
   .film-frame figcaption { font-size: 0.92rem; }
+}
+
+/* ---------- Touch targets ----------
+   On a finger-driven device every control needs ~44px of height to be
+   comfortably hittable. The chips are 37px on a mouse, which is fine there
+   but too tight to tap reliably. */
+@media (pointer: coarse) {
+  .hero-contact a,
+  .contact-links a,
+  .nav-links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .scroll-cue { padding: 6px 12px; }
+  .cert-thumb, .film-frame { min-height: 44px; }
 }
 
 /* ---------- Reduced motion ---------- */

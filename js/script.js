@@ -49,6 +49,42 @@
   };
 
   /* ------------------------------------------------------------------
+     1b. Lazy backgrounds
+         A background-image in an inline style is fetched while the page is
+         still parsing. The three interlude bands are ~750 KB and sit several
+         screens down, so they wait in data-bg until the band is close.
+     ------------------------------------------------------------------ */
+  const lazyBgs = Array.from(document.querySelectorAll("[data-bg]"));
+  const loadBg = (el) => {
+    if (!el.dataset.bg) return;
+    el.style.backgroundImage = `url('${el.dataset.bg}')`;
+    delete el.dataset.bg;
+  };
+  if ("IntersectionObserver" in window && lazyBgs.length) {
+    const bgObs = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          loadBg(e.target);
+          obs.unobserve(e.target);
+        });
+      },
+      // start fetching well before it scrolls in, so nothing pops
+      { rootMargin: "800px 0px" }
+    );
+    lazyBgs.forEach((el) => bgObs.observe(el));
+
+    // Safety net. An observer that never fires would leave these bands blank
+    // forever, which is far worse than loading them a moment early — so once
+    // the page has settled, pick up anything still waiting.
+    const sweep = () => setTimeout(() => lazyBgs.forEach(loadBg), 2500);
+    if (document.readyState === "complete") sweep();
+    else window.addEventListener("load", sweep, { once: true });
+  } else {
+    lazyBgs.forEach(loadBg);
+  }
+
+  /* ------------------------------------------------------------------
      2. Split headings for the mask reveal.
         Characters are inline-block so they can animate individually —
         which means the browser would happily break a line *inside* a
@@ -195,23 +231,6 @@
           scrollTrigger: { trigger: roll, start: "top 88%", once: true },
         }
       );
-    }
-
-    // certificate reel slides horizontally as the section passes
-    const reelTrack = document.getElementById("reelTrack");
-    if (reelTrack) {
-      const overflow = () => Math.max(0, reelTrack.scrollWidth - window.innerWidth + 80);
-      gsap.to(reelTrack, {
-        x: () => -overflow(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#awards",
-          start: "bottom 92%",
-          end: () => `+=${overflow() + window.innerHeight * 0.5}`,
-          scrub: 1,
-          invalidateOnRefresh: true,
-        },
-      });
     }
 
     // timeline progress line
@@ -487,7 +506,10 @@
     }, true);
   };
 
-  makeDraggable(document.getElementById("reelTrack"));
+  // The certificates strip scrolls natively (overflow-x) — it used to have a
+  // GSAP scroll tween AND this drag handler both writing transform, which
+  // meant a drag was wiped out by the next scroll. Native scrolling also gets
+  // touch momentum, trackpad gestures and keyboard for free.
 
   /* ------------------------------------------------------------------
      10b. Camera roll — a genuinely endless carousel

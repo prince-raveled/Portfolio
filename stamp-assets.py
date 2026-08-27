@@ -45,7 +45,7 @@ def main():
             changed.append(f"{base} -> ?v={h}")
         return f'{attr}="{new}"'
 
-    html = re.sub(r'(src|data-src)="([^"]+)"', repl, html)
+    html = re.sub(r'(src|data-src|data-bg)="([^"]+)"', repl, html)
 
     # The interlude bands are CSS background-image, not <img>, so they need
     # stamping too — otherwise swapping one of those pictures leaves every
