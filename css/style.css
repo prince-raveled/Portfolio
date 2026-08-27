@@ -1066,17 +1066,6 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .cert-thumb:hover { transform: rotate(0deg) translateY(-10px) scale(1.03); box-shadow: var(--shadow-l); z-index: 2; }
 .cert-thumb:hover img { filter: grayscale(0) contrast(1); }
-.reel-hint {
-  margin-top: 1.4rem;
-  text-align: center;
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  opacity: 0.7;
-}
-.filmstrip .reel-hint { color: #9fb492; opacity: 0.8; }
 
 /* ---------- Contact ---------- */
 .contact-panel { text-align: center; margin-bottom: clamp(2rem, 6vw, 5rem); }
