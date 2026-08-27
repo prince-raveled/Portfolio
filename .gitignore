@@ -19,3 +19,9 @@ desktop.ini
 *.log
 __pycache__/
 *.pyc
+
+# local editor & tooling config
+.claude/
+.vscode/
+.idea/
+*.code-workspace
