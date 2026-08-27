@@ -575,7 +575,12 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .interlude-frame {
   position: relative;
-  height: clamp(300px, 58vh, 620px);
+  /* The photographs are 4:3. In the old 2.26:1 band, background-size:cover
+     threw away 41% of every frame before the parallax zoom even started.
+     16:9 keeps roughly three quarters of the picture. */
+  aspect-ratio: 16 / 9;
+  min-height: 260px;
+  max-height: 82vh;
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-l);
@@ -583,7 +588,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .interlude-img {
   position: absolute;
-  inset: -14% 0;
+  /* just enough overscan to cover the parallax travel — the old -14% was
+     cropping the picture further for no visible benefit */
+  inset: -7% 0;
   background-size: cover;
   background-position: center;
   will-change: transform;
@@ -592,9 +599,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   content: "";
   position: absolute;
   inset: 0;
-  /* the bands are all dusk/night photographs now, so this only needs to be
-     heavy enough to seat the quote — any more and the picture goes muddy */
-  background: linear-gradient(180deg, rgba(30, 50, 25, 0.06), rgba(18, 30, 14, 0.34));
+  /* Neutral, not green: the old olive scrim cast a visible tint over the
+     night frames. Weighted to the bottom only, where the quote sits. */
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(6, 10, 16, 0.52));
 }
 .interlude-quote {
   position: absolute;

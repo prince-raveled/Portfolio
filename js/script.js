@@ -133,12 +133,14 @@
         }
       );
 
+      // gentle: a 1.18 zoom was cropping another chunk out of an already
+      // tight crop. Barely any scale, just enough drift to feel alive.
       gsap.fromTo(
         img,
-        { yPercent: -10, scale: 1.18 },
+        { yPercent: -4.5, scale: 1.05 },
         {
-          yPercent: 10,
-          scale: 1.02,
+          yPercent: 4.5,
+          scale: 1.0,
           ease: "none",
           scrollTrigger: { trigger: band, start: "top bottom", end: "bottom top", scrub: 0.8 },
         }
