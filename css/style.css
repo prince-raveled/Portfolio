@@ -12,7 +12,13 @@ a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 button { font: inherit; background: none; border: none; cursor: pointer; color: inherit; }
 
-html { scroll-padding-top: 96px; }
+html {
+  scroll-padding-top: 96px;
+  /* clip, not hidden: it contains stray horizontal overflow without turning
+     the root into a scroll container (which would fight Lenis). Paired with
+     body below so nothing can widen the layout viewport on mobile. */
+  overflow-x: clip;
+}
 html:not(.lenis) { scroll-behavior: smooth; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
@@ -99,18 +105,29 @@ body {
 }
 html[data-theme="dusk"] .grain-overlay { opacity: 0.06; }
 
+/* The glow used to BE the oversized element: position:fixed with
+   inset:-20vmax. body{overflow-x:hidden} does not clip fixed descendants, and
+   in portrait vmax is the viewport HEIGHT — so on a tall narrow phone it hung
+   ~180px past each edge, widening the layout viewport and making mobile Chrome
+   zoom the whole page out. The oversize now lives on a clipped child. */
 .ground-glow {
   position: fixed;
-  inset: -20vmax;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+}
+.ground-glow::before {
+  content: "";
+  position: absolute;
+  inset: -20vmax;
   background:
     radial-gradient(38vmax 38vmax at 18% 12%, rgba(255, 255, 255, 0.55), transparent 62%),
     radial-gradient(46vmax 46vmax at 84% 78%, var(--ground-2), transparent 65%);
   opacity: 0.9;
   animation: glow-drift 26s ease-in-out infinite alternate;
 }
-html[data-theme="dusk"] .ground-glow {
+html[data-theme="dusk"] .ground-glow::before {
   background:
     radial-gradient(40vmax 40vmax at 22% 10%, rgba(120, 180, 130, 0.14), transparent 64%),
     radial-gradient(50vmax 50vmax at 82% 82%, rgba(60, 110, 90, 0.20), transparent 66%);
@@ -313,6 +330,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   display: flex;
   align-items: center;
   padding: 8rem clamp(1.3rem, 5vw, 4rem) 6rem;
+  /* the portrait halo (inset:-38%) and the grass both sit outside the content
+     box; clip them here so they can never push the page wider */
+  overflow: hidden;
 }
 .hero-inner {
   position: relative;
@@ -1203,10 +1223,14 @@ body.no-scroll { overflow: hidden; }
     background: var(--panel);
     box-shadow: -14px 0 46px rgba(0, 0, 0, 0.18);
     transform: translateX(100%);
-    transition: transform 0.5s var(--ease-soft);
+    /* visibility:hidden keeps the closed drawer out of the overflow area — a
+       fixed element parked off-screen can widen the layout viewport on mobile.
+       It also hides the links from screen readers while the menu is shut. */
+    visibility: hidden;
+    transition: transform 0.5s var(--ease-soft), visibility 0.5s;
     overflow-y: auto;
   }
-  .nav-links.open { transform: translateX(0); }
+  .nav-links.open { transform: translateX(0); visibility: visible; }
   .nav-links a { font-size: 1rem; }
   .nav-burger { display: block; }
   .collage { min-height: 300px; }

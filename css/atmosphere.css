@@ -107,8 +107,14 @@ html[data-theme="dusk"] .sky-rays {
   z-index: 4;
   pointer-events: none;
   overflow: hidden;
-  /* same trick as the grass: the gust pushes the whole mote field with one
-     transform rather than re-resolving a calc() inside 20 keyframes per frame */
+}
+/* The gust pushes the whole mote field with one transform rather than
+   re-resolving a calc() inside 20 keyframes per frame. It lives on an inner
+   wrapper so the fixed box itself never moves — a fixed element nudged past
+   the right edge can widen the layout viewport on mobile. */
+.dust-drift {
+  position: absolute;
+  inset: 0;
   transform: translate3d(calc(var(--wind) * 46px), 0, 0);
   will-change: transform;
 }

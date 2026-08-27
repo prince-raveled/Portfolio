@@ -76,6 +76,11 @@
   /* ---------------- Dust motes ---------------- */
   const dust = document.getElementById("dust");
   if (dust) {
+    // the wind transform rides on this wrapper, not the fixed container
+    const drift = document.createElement("div");
+    drift.className = "dust-drift";
+    dust.appendChild(drift);
+
     const COUNT = small ? 10 : 20;
     for (let i = 0; i < COUNT; i++) {
       const m = document.createElement("div");
@@ -87,7 +92,7 @@
       m.style.setProperty("--peak", (0.35 + Math.random() * 0.5).toFixed(2));
       m.style.animationDuration = `${18 + Math.random() * 26}s`;
       m.style.animationDelay = `${-Math.random() * 40}s`;
-      dust.appendChild(m);
+      drift.appendChild(m);
     }
   }
 
