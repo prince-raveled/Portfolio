@@ -738,7 +738,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 /* ---------- Skills ---------- */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* min(300px, 100%) — a bare minmax(300px,…) forces a 300px column even when
+     the panel only offers ~250px, which pushed the cards out of frame at 320px */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 1.5rem;
 }
 .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -893,7 +895,7 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 /* ---------- Projects ---------- */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
   gap: 1.5rem;
 }
 .project-card { display: flex; flex-direction: column; }

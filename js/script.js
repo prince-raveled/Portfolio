@@ -178,43 +178,20 @@
       scrollTrigger: { trigger: ".hero", start: "12% top", end: "bottom top", scrub: 1 },
     });
 
-    // camera roll pans sideways, like a contact sheet being pulled past
-    const filmTrack = document.getElementById("filmTrack");
+    // the camera roll runs itself (section 14) — just fade the strip in
     const roll = document.getElementById("lens");
-    if (filmTrack && roll) {
-      const filmOverflow = () => Math.max(0, filmTrack.scrollWidth - window.innerWidth + 60);
+    if (roll) {
       gsap.fromTo(
-        filmTrack,
-        { x: 0 },
+        roll,
+        { opacity: 0.35, y: 26 },
         {
-          x: () => -filmOverflow(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: roll,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: { trigger: roll, start: "top 88%", once: true },
         }
       );
-
-      // frames settle in one after another the first time the roll appears
-      gsap.utils.toArray(".film-frame").forEach((frame, i) => {
-        gsap.fromTo(
-          frame,
-          { y: 34, rotate: i % 2 ? 1.2 : -1.2, opacity: 0.55 },
-          {
-            y: 0,
-            rotate: 0,
-            opacity: 1,
-            duration: 0.9,
-            ease: "power2.out",
-            scrollTrigger: { trigger: roll, start: "top 85%", once: true },
-            delay: i * 0.09,
-          }
-        );
-      });
     }
 
     // certificate reel slides horizontally as the section passes
@@ -508,7 +485,188 @@
   };
 
   makeDraggable(document.getElementById("reelTrack"));
-  makeDraggable(document.getElementById("filmTrack"));
+
+  /* ------------------------------------------------------------------
+     10b. Camera roll — a genuinely endless carousel
+
+     The strip is cloned until it covers more than two viewports, then the
+     offset wraps by exactly one set width. Because every set is identical,
+     the wrap is invisible: the frame leaving on the left is the same one
+     arriving on the right. Drift, drag and momentum all feed one offset.
+     ------------------------------------------------------------------ */
+  const filmTrack = document.getElementById("filmTrack");
+  const filmStrip = document.getElementById("filmstrip");
+
+  if (filmTrack && filmStrip && filmTrack.children.length) {
+    const DRIFT = 26;                                  // px per second
+    const originals = Array.from(filmTrack.children);
+    let setWidth = 0;
+    let offset = 0;
+    let paused = false;
+    let dragging = false;
+    let pointerId = null;
+    let lastPointerX = 0;
+    let velocity = 0;
+    let moved = 0;
+    let rafId = null;
+    let lastFrame = performance.now();
+
+    const appendSet = () => {
+      const frag = document.createDocumentFragment();
+      originals.forEach((el) => {
+        const clone = el.cloneNode(true);
+        clone.setAttribute("data-clone", "");
+        clone.setAttribute("aria-hidden", "true");
+        clone.querySelectorAll("img").forEach((img) => { img.loading = "lazy"; });
+        frag.appendChild(clone);
+      });
+      filmTrack.appendChild(frag);
+    };
+
+    // Read the repeat period straight off the layout: the distance from the
+    // first frame to its first clone. Summing widths + gap by hand got this
+    // wrong, because the frame width is a clamp() of the viewport.
+    const measurePeriod = () => {
+      const first = filmTrack.children[0];
+      const firstClone = filmTrack.children[originals.length];
+      if (!first || !firstClone) return 0;
+      const d = firstClone.offsetLeft - first.offsetLeft;
+      return isFinite(d) && d > 1 ? d : 0;
+    };
+
+    const rebuild = () => {
+      filmTrack.querySelectorAll("[data-clone]").forEach((n) => n.remove());
+      appendSet();
+      setWidth = measurePeriod();
+      if (!setWidth) return;
+
+      // enough copies to always cover the viewport plus a set to wrap into
+      const need = Math.ceil((window.innerWidth * 2) / setWidth) + 1;
+      for (let c = 1; c < need; c++) appendSet();
+
+      // keep the current position meaningful across a rebuild
+      offset = -(((-offset % setWidth) + setWidth) % setWidth);
+    };
+
+    const wrap = () => {
+      if (!setWidth) return;
+      // Only at the moment of wrapping — roughly once per lap — re-read the
+      // period. If anything changed the layout without us hearing about it,
+      // this self-corrects on the next lap instead of jumping forever.
+      if (offset <= -setWidth || offset > 0) {
+        setWidth = measurePeriod() || setWidth;
+        while (offset <= -setWidth) offset += setWidth;
+        while (offset > 0) offset -= setWidth;
+      }
+    };
+
+    const frame = (now) => {
+      const dt = Math.min(0.05, (now - lastFrame) / 1000);
+      lastFrame = now;
+
+      if (dragging) {
+        // position is driven by the pointer; nothing to integrate
+      } else {
+        if (Math.abs(velocity) > 1) {
+          offset += velocity * dt;
+          velocity *= 0.94;                            // friction after a flick
+        } else {
+          velocity = 0;
+          if (!paused && !reduceMotion) offset -= DRIFT * dt;
+        }
+      }
+
+      wrap();
+      filmTrack.style.transform = `translate3d(${offset.toFixed(2)}px, 0, 0)`;
+      rafId = requestAnimationFrame(frame);
+    };
+
+    /* --- drag --- */
+    filmTrack.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      moved = 0;
+      velocity = 0;
+      lastPointerX = e.clientX;
+      pointerId = e.pointerId;
+      filmTrack.setPointerCapture(pointerId);
+      filmTrack.classList.add("dragging");
+    });
+
+    filmTrack.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastPointerX;
+      lastPointerX = e.clientX;
+      moved += Math.abs(dx);
+      offset += dx;
+      velocity = dx * 45;                              // carry the throw
+      wrap();
+      filmTrack.style.transform = `translate3d(${offset.toFixed(2)}px, 0, 0)`;
+    });
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      filmTrack.classList.remove("dragging");
+    };
+    filmTrack.addEventListener("pointerup", endDrag);
+    filmTrack.addEventListener("pointercancel", endDrag);
+
+    // a drag must not open the lightbox
+    filmTrack.addEventListener("click", (e) => {
+      if (moved > 6) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    /* --- pause while it is being looked at --- */
+    filmStrip.addEventListener("pointerenter", () => { paused = true; });
+    filmStrip.addEventListener("pointerleave", () => { paused = false; });
+
+    /* --- only run while on screen --- */
+    const start = () => {
+      if (rafId) return;
+      lastFrame = performance.now();
+      rafId = requestAnimationFrame(frame);
+    };
+    const stop = () => {
+      if (!rafId) return;
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    };
+
+    rebuild();
+
+    // The wrap distance has to match the live layout exactly — a stale value
+    // makes the strip jump mid-loop. A ResizeObserver on one frame catches
+    // every cause of a width change (viewport, zoom, font swap, late images),
+    // not just the window resize event.
+    if ("ResizeObserver" in window) {
+      let lastFrameWidth = originals[0].getBoundingClientRect().width;
+      const ro = new ResizeObserver(() => {
+        const w = originals[0].getBoundingClientRect().width;
+        if (Math.abs(w - lastFrameWidth) < 0.5) return;
+        lastFrameWidth = w;
+        rebuild();
+      });
+      ro.observe(originals[0]);
+    }
+    window.addEventListener("load", rebuild);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(
+        (entries) => entries.forEach((en) => (en.isIntersecting ? start() : stop())),
+        { rootMargin: "200px 0px" }
+      ).observe(filmStrip);
+    } else {
+      start();
+    }
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(rebuild, 180);
+    });
+  }
 
   /* ------------------------------------------------------------------
      11. Lightbox
@@ -538,11 +696,16 @@
     });
   });
 
-  document.querySelectorAll(".film-frame").forEach((frame) => {
-    frame.addEventListener("click", () => {
-      const img = frame.querySelector("img");
-      openLightbox(frame.getAttribute("data-src"), img?.alt, frame.querySelector("figcaption")?.textContent.trim());
-    });
+  // delegated, because the carousel clones its frames to loop endlessly and
+  // the clones would otherwise have no handler
+  document.getElementById("filmstrip")?.addEventListener("click", (e) => {
+    const frame = e.target.closest(".film-frame");
+    if (!frame) return;
+    openLightbox(
+      frame.getAttribute("data-src"),
+      frame.querySelector("img")?.alt,
+      frame.querySelector("figcaption")?.textContent.trim()
+    );
   });
   lightboxClose.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
