@@ -575,12 +575,13 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .interlude-frame {
   position: relative;
-  /* The photographs are 4:3. In the old 2.26:1 band, background-size:cover
-     threw away 41% of every frame before the parallax zoom even started.
-     16:9 keeps roughly three quarters of the picture. */
-  aspect-ratio: 16 / 9;
-  min-height: 260px;
-  max-height: 82vh;
+  /* Height is set explicitly, NOT via aspect-ratio.
+     aspect-ratio + a binding max-height makes the browser shrink the WIDTH to
+     preserve the ratio, which left a dead gap down the right of the band on
+     any window shorter than 16:9. An explicit height keeps width at 100%
+     always, and 56vw still gives roughly a 16:9 band. */
+  width: 100%;
+  height: clamp(240px, 56vw, 105vh);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-l);
