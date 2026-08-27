@@ -592,7 +592,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(30, 50, 25, 0.10), rgba(20, 35, 15, 0.42));
+  /* the bands are all dusk/night photographs now, so this only needs to be
+     heavy enough to seat the quote — any more and the picture goes muddy */
+  background: linear-gradient(180deg, rgba(30, 50, 25, 0.06), rgba(18, 30, 14, 0.34));
 }
 .interlude-quote {
   position: absolute;

@@ -46,6 +46,25 @@ def main():
         return f'{attr}="{new}"'
 
     html = re.sub(r'(src|data-src)="([^"]+)"', repl, html)
+
+    # The interlude bands are CSS background-image, not <img>, so they need
+    # stamping too — otherwise swapping one of those pictures leaves every
+    # returning visitor looking at the cached old one.
+    def repl_css(m):
+        url = m.group(1)
+        base = url.split("?")[0]
+        if not base.startswith(STAMP):
+            return m.group(0)
+        h = digest(base)
+        if not h:
+            print(f"  !! missing on disk: {base}")
+            return m.group(0)
+        new = f"{base}?v={h}"
+        if new != url:
+            changed.append(f"{base} -> ?v={h}")
+        return f"url('{new}')"
+
+    html = re.sub(r"url\('([^']+)'\)", repl_css, html)
     io.open(HTML, "w", encoding="utf-8", newline="\n").write(html)
 
     if changed:
