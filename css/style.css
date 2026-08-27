@@ -575,13 +575,13 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .interlude-frame {
   position: relative;
-  /* Height is set explicitly, NOT via aspect-ratio.
-     aspect-ratio + a binding max-height makes the browser shrink the WIDTH to
-     preserve the ratio, which left a dead gap down the right of the band on
-     any window shorter than 16:9. An explicit height keeps width at 100%
-     always, and 56vw still gives roughly a 16:9 band. */
+  /* The source files are pre-cropped to exactly 2.7:1 — the region chosen for
+     each picture — so the band matches that ratio and cover() has nothing left
+     to throw away. No max-height here: pairing one with aspect-ratio is what
+     made the browser shrink the width and leave a gap down the right. */
   width: 100%;
-  height: clamp(240px, 56vw, 105vh);
+  aspect-ratio: 2.7 / 1;
+  min-height: 150px;
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-l);
@@ -589,9 +589,9 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .interlude-img {
   position: absolute;
-  /* just enough overscan to cover the parallax travel — the old -14% was
-     cropping the picture further for no visible benefit */
-  inset: -7% 0;
+  /* flush: the crop is already the picture we want, so the only headroom for
+     the parallax comes from the constant 1.06 scale in the drift tween */
+  inset: 0;
   background-size: cover;
   background-position: center;
   will-change: transform;
@@ -1045,7 +1045,8 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 .cert-thumb {
   position: relative;
   flex: 0 0 clamp(200px, 26vw, 300px);
-  padding: 10px 10px 34px;
+  /* the deep bottom margin was only there to seat the "view" caption */
+  padding: 10px 10px 13px;
   background: var(--paper);
   border-radius: 4px;
   box-shadow: var(--shadow-m);
@@ -1065,17 +1066,6 @@ html[data-theme="dusk"] .theme-toggle .tt-night { opacity: 1; }
 }
 .cert-thumb:hover { transform: rotate(0deg) translateY(-10px) scale(1.03); box-shadow: var(--shadow-l); z-index: 2; }
 .cert-thumb:hover img { filter: grayscale(0) contrast(1); }
-.cert-thumb::after {
-  content: "view";
-  position: absolute;
-  left: 0; right: 0; bottom: 10px;
-  text-align: center;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-}
 .reel-hint {
   margin-top: 1.4rem;
   text-align: center;

@@ -133,14 +133,15 @@
         }
       );
 
-      // gentle: a 1.18 zoom was cropping another chunk out of an already
-      // tight crop. Barely any scale, just enough drift to feel alive.
+      // Constant 1.06 scale, drifting within that headroom. Animating the
+      // scale would have kept changing how much of the chosen crop is shown;
+      // this way the framing stays put and only the picture moves.
       gsap.fromTo(
         img,
-        { yPercent: -4.5, scale: 1.05 },
+        { yPercent: -2.5, scale: 1.06 },
         {
-          yPercent: 4.5,
-          scale: 1.0,
+          yPercent: 2.5,
+          scale: 1.06,
           ease: "none",
           scrollTrigger: { trigger: band, start: "top bottom", end: "bottom top", scrub: 0.8 },
         }
